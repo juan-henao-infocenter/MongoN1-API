@@ -1,6 +1,4 @@
-// productController.js
 exports.getAllProducts = (req, res) => {
-  // Aquí puedes realizar alguna lógica para obtener datos de productos
   fetch("https://api.escuelajs.co/api/v1/products/" )
     .then((response) => response.json())
     .then((response) => {

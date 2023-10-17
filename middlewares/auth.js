@@ -1,22 +1,21 @@
-// middleware/auth.js
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const secretKey = 'tu_secreto'; // Debes usar una clave segura
+const secretKey = process.env.SECRET_KEY; 
 
 const authenticate = (req, res, next) => {
-  // Obtén el token del encabezado de autorización
   const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({ message: 'Token de acceso faltante' });
   }
 
-  // Verifica y descodifica el token
+  console.log(token)
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
+      console.log(err)
       return res.status(401).json({ message: 'Token inválido' });
     }
 
-    // El token es válido; adjunta los datos del usuario al objeto de solicitud
     req.user = decoded;
 
     next();
