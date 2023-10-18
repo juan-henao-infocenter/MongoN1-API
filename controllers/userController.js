@@ -12,7 +12,7 @@ exports.loginUser = (req, res) => {
     .findOne({ email: email })
     .then((data) => {
       if (data && bcrypt.compareSync(password, data.password)) {
-        const token = jwt.sign({ userId: data.id }, secretKey, {
+        const token = jwt.sign({ userId: data.id, role: data.role }, secretKey, {
           expiresIn: "1h",
         });
 

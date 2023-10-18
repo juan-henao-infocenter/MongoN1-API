@@ -12,7 +12,12 @@ const userSchema = mongoose.Schema({
     password:{
         type:String,
         required:true,
-    }
+    },
+    role: {
+        type: String,
+        enum: ["admin", "cliente"],
+        default: "cliente",
+    },
 });
 
 module.exports = mongoose.model('Users', userSchema);
