@@ -1,30 +1,38 @@
-const fs = require('fs');
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+require("dotenv").config();
+const userSchema = require("../models/user");
 
-const usersFile = './usersFile.json';
-const secretKey = process.env.SECRET_KEY; 
+const usersFile = "./usersFile.json";
+const secretKey = process.env.SECRET_KEY;
 
 exports.loginUser = (req, res) => {
-  console.log(req)
-  console.log(req.body)
   const { email, password } = req.body;
-  const usersData = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
-  const user = usersData.users.find((u) => u.email === email);
+  userSchema
+    .findOne({ email: email })
+    .then((data) => {
+      if (data && bcrypt.compareSync(password, data.password)) {
+        const token = jwt.sign({ userId: data.id }, secretKey, {
+          expiresIn: "1h",
+        });
 
-  if (user && bcrypt.compareSync(password, user.password)) {
-    const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '1h' });
-
-    res.json({ token });
-  } else {
-    res.status(401).json({ message: 'Credenciales incorrectas' });
-  }
+        res.json({ token });
+      } else {
+        res.status(401).json({ message: "Credenciales incorrectas" });
+      }
+    })
+    .catch((error) => {
+      res.status(400).json({ message: error.message });
+    });
 };
 
 exports.getAllUsers = (req, res) => {
-  // Lógica para obtener todos los usuarios
+  userSchema
+    .find()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((error) => res.json({ message: error }));
 };
 
 exports.getUserById = (req, res) => {

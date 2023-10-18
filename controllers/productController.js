@@ -2,10 +2,6 @@ exports.getAllProducts = (req, res) => {
   fetch("https://api.escuelajs.co/api/v1/products/" )
     .then((response) => response.json())
     .then((response) => {
-      console.log(
-        "--------------------------------------------------------------------------------despues del llamado--------------------------------------------"
-      );
-      console.log(response);
       res.json(response);
     })
     .catch((error) => {

@@ -9,7 +9,6 @@ const authenticate = (req, res, next) => {
     return res.status(401).json({ message: 'Token de acceso faltante' });
   }
 
-  console.log(token)
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
       console.log(err)
