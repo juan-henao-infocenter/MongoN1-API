@@ -1,13 +1,27 @@
 exports.getAllProducts = (req, res) => {
-  fetch("https://api.escuelajs.co/api/v1/products/" )
+  const filter = req.query.filter;
+  const limit = parseInt(req.query.limit);
+  const offset = parseInt(req.query.offset);
+
+  console.log(req.query)
+
+  url = "https://api.escuelajs.co/api/v1/products/";
+
+  console.log(url);
+
+  fetch(
+    `${url}?${
+      filter === "" ? "" : "tilte=" + filter + "&"
+    }offset=${offset}&limit=${limit}`
+  )
     .then((response) => response.json())
     .then((response) => {
       res.json(response);
     })
     .catch((error) => {
+      console.log('---------------error---------------')
       console.log("Error:", error);
     });
-  
 };
 
 exports.getProductById = (req, res) => {

@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const bcrypt = require('bcrypt');
 require('dotenv').config();
@@ -30,6 +31,7 @@ User.countDocuments()
   });
 
 app.use(express.json());
+app.use(cors());
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 
