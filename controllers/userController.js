@@ -4,7 +4,7 @@ require("dotenv").config();
 const userSchema = require("../models/user");
 
 const usersFile = "./usersFile.json";
-const secretKey = process.env.SECRET_KEY;
+const secretKey = process.env['SECRET_KEY'];
 
 exports.loginUser = (req, res) => {
   const { email, password } = req.body;
