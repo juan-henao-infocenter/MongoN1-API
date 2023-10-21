@@ -1,3 +1,4 @@
+const { graphqlHTTP } = require('express-graphql');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -6,6 +7,8 @@ require('dotenv').config();
 const port = process.env['PORT'] || 5000;
 const User = require('./models/user');
 var mongoose = require('mongoose');
+const schema = require('./graphQL/schema')
+
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -43,7 +46,10 @@ const productRoutes = require('./routes/productRoutes');
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 
-app.get('/', (req,res) => res.send('para usar el api utiliza los enpoits'));
+app.use('/', graphqlHTTP({
+  schema,
+  graphiql: true,
+}));
 
 app.listen(port, () => {
   console.log(`Servidor API escuchando en el puerto ${port}`);

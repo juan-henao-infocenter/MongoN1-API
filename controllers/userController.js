@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const userSchema = require("../models/user");
+const {createToken} = require("../middlewares/auth");
 
 const usersFile = "./usersFile.json";
-const secretKey = process.env['SECRET_KEY'];
 
 exports.loginUser = (req, res) => {
   const { email, password } = req.body;
@@ -12,9 +12,7 @@ exports.loginUser = (req, res) => {
     .findOne({ email: email })
     .then((data) => {
       if (data && bcrypt.compareSync(password, data.password)) {
-        const token = jwt.sign({ userId: data.id, role: data.role }, secretKey, {
-          expiresIn: "1h",
-        });
+        const token = createToken(data);
 
         res.json({ token });
       } else {
