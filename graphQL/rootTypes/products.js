@@ -5,9 +5,14 @@ const {
   GraphQLFloat,
   GraphQLNonNull,
   GraphQLID,
+  GraphQLJSONObject,
 } = require("graphql");
 const { ProductType } = require("../types");
-const { getAllProducts, getProduct, addProduct } = require("../resolvers/productsResolver");
+const {
+  getAllProducts,
+  getProduct,
+  addProduct,
+} = require("../resolvers/productsResolver");
 
 const products = {
   type: new GraphQLList(ProductType),
@@ -56,4 +61,36 @@ const createProduct = {
   },
 };
 
-module.exports = { products, product, createProduct };
+//crear un metodo para guardar muchos productos como se hace en createProduct pero masivo
+const bulkProduct = {
+  type: new GraphQLList(ProductType),
+  description: "Create many products at once.",
+  args: {
+    data: { type: new GraphQLList(GraphQLString) },
+  },
+  async resolve(_, args, context) {
+    if (!context.user && context.user.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    const promises = [];
+    args.data.forEach((productDataStr) => {
+      let product;
+      try {
+        product = JSON.parse(productDataStr);
+      } catch (err) {
+        throw new Error(`Invalid input ${productDataStr}`);
+      }
+      promises.push(addProduct({ ...product }));
+    });
+    Promise.all(promises)
+      .then((data) => {
+        return data;
+      })
+      .catch((error) => {
+        throw error;
+      });
+  },
+};
+
+module.exports = { products, product, createProduct, bulkProduct };

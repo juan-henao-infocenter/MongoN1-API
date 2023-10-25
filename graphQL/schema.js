@@ -1,5 +1,5 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require("graphql");
-const { products, product, createProduct } = require("./rootTypes/products");
+const { products, product, createProduct, bulkProduct } = require("./rootTypes/products");
 const { userLogin, user, createUser } = require("./rootTypes/users");
 
 const queryType = new GraphQLObjectType({
@@ -11,7 +11,7 @@ const queryType = new GraphQLObjectType({
 const mutationType = new GraphQLObjectType({
   name: "MutationType",
   description: "The root mutation type",
-  fields: { userLogin, createUser, createProduct },
+  fields: { userLogin, createUser, createProduct, bulkProduct },
 });
 
 const schema = new GraphQLSchema({
