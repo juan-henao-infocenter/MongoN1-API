@@ -18,4 +18,41 @@ const login = async (args) => {
   }
 };
 
-module.exports = { login };
+const getUser = async (id) => {
+  try {
+    let user = await User.findById(id).select("-__v -password");
+
+    if (user) {
+      return user;
+    } else {
+      throw new Error("Credenciales incorrectas");
+    }
+  } catch (error) {
+    throw new Error("Error al obtener el usuario: " + error);
+  }
+};
+
+const createUser = async (args) => {
+  console.log("Creando Usuario");
+  try {
+    const { name, lastName, email, password, role } = args;
+    let existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      let hashedPassword = await bcrypt.hash(password, 10);
+      let createdUser = new User({
+        name,
+        lastName,
+        email,
+        password: hashedPassword,
+      });
+      createdUser = await createdUser.save();
+      return createdUser;
+    } else {
+      throw new Error("El correo electronico ya existe");
+    }
+  } catch (err) {
+    throw new Error("Error al obtener el usuario: " + error);
+  }
+};
+
+module.exports = { login, getUser, createUser };
