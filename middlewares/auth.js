@@ -20,10 +20,41 @@ const authenticate = (req, res, next) => {
   });
 };
 
+const validateToken = (req, res, next) => {
+  try{
+    const token = req.headers.authorization;
+  
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        next();
+      } else {
+        req.user = decoded;
+        next();
+      }
+    });
+    
+  }
+  catch(error){
+    console.error(error.message);
+    next();
+  }
+};
+
+const checkUserRole = (requiredRole) => (req, res, next) => {
+  const user = req.user;
+  if (user && user.role === requiredRole) {
+    next();
+  } else {
+    return res
+      .status(403)
+      .json({ message: "Acceso denegado. Rol requerido: " + requiredRole });
+  }
+};
+
 const createToken = (data) => {
   return jwt.sign({ userId: data.id, role: data.role }, secretKey, {
     expiresIn: "1h",
   });
 };
 
-module.exports = { authenticate, createToken };
+module.exports = { authenticate, createToken, validateToken, checkUserRole };

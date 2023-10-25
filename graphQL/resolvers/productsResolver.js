@@ -1,3 +1,4 @@
+const product = require('../../models/product');
 const Product = require('../../models/product');
 
 const getAllProducts = async (args)=>{
@@ -30,4 +31,25 @@ const getAllProducts = async (args)=>{
       }
 }
 
-module.exports = { getAllProducts }
+const getProduct = async (args)=>{
+  try {
+      const id = args.id;
+
+      if(!id){
+        throw new Error("No se ha enviado un ID valido");
+      }
+        
+      const product = await Product.findById(id);
+
+      if(!product){
+        throw new Error(`El producto con id ${id}, no existe`);
+      }
+
+      return product
+
+    } catch (error) {
+      throw new Error(`Error al obtener el producto: ${error.message}`);
+    }
+}
+
+module.exports = { getAllProducts, getProduct }
